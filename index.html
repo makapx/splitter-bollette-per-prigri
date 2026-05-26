@@ -1,0 +1,967 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Divisione Bolletta Luce</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css"
+    />
+
+    <style>
+      /* ── Reset ─────────────────────────────────────────── */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* ── Design tokens (stile Tailwind) ────────────────── */
+      :root {
+        --font-sans: "DM Sans", sans-serif;
+        --font-mono: "DM Mono", monospace;
+
+        /* Slate palette */
+        --slate-50: #f8fafc;
+        --slate-100: #f1f5f9;
+        --slate-200: #e2e8f0;
+        --slate-300: #cbd5e1;
+        --slate-400: #94a3b8;
+        --slate-500: #64748b;
+        --slate-600: #475569;
+        --slate-700: #334155;
+        --slate-800: #1e293b;
+        --slate-900: #0f172a;
+
+        /* Blue accent */
+        --blue-50: #eff6ff;
+        --blue-100: #dbeafe;
+        --blue-200: #bfdbfe;
+        --blue-500: #3b82f6;
+        --blue-600: #2563eb;
+        --blue-700: #1d4ed8;
+
+        /* Red */
+        --red-50: #fef2f2;
+        --red-500: #ef4444;
+        --red-600: #dc2626;
+
+        /* Amber */
+        --amber-50: #fffbeb;
+        --amber-200: #fde68a;
+        --amber-600: #d97706;
+
+        /* Greens */
+        --green-50: #f0fdf4;
+        --green-500: #22c55e;
+        --green-600: #16a34a;
+
+        /* Semantic */
+        --color-bg: var(--slate-50);
+        --color-surface: #ffffff;
+        --color-border: var(--slate-200);
+        --color-border-focus: var(--blue-500);
+        --color-text: var(--slate-800);
+        --color-text-muted: var(--slate-500);
+        --color-text-faint: var(--slate-400);
+        --color-accent: var(--blue-600);
+        --color-accent-hover: var(--blue-700);
+        --color-danger: var(--red-500);
+        --color-danger-bg: var(--red-50);
+
+        --radius-sm: 6px;
+        --radius-md: 10px;
+        --radius-lg: 14px;
+        --radius-xl: 18px;
+
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md:
+          0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+        --shadow-lg:
+          0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+
+        /* Compatibility aliases for inline JS/dynamic styles */
+        --color-background-primary: var(--color-surface);
+        --color-background-secondary: var(--slate-50);
+        --color-background-tertiary: var(--slate-100);
+        --color-background-info: var(--blue-50);
+        --color-background-danger: var(--red-50);
+        --color-text-primary: var(--slate-800);
+        --color-text-secondary: var(--slate-500);
+        --color-text-tertiary: var(--slate-400);
+        --color-text-info: var(--blue-600);
+        --color-text-danger: var(--red-500);
+        --color-border-tertiary: var(--slate-200);
+        --color-border-info: var(--blue-200);
+        --border-radius-lg: var(--radius-lg);
+        --border-radius-md: var(--radius-md);
+      }
+
+      /* ── Base ───────────────────────────────────────────── */
+      body {
+        font-family: var(--font-sans);
+        background: var(--color-bg);
+        color: var(--color-text);
+        min-height: 100vh;
+        padding: 2.5rem 1rem 4rem;
+        font-size: 14px;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ── Layout wrapper ─────────────────────────────────── */
+      .app {
+        max-width: 680px;
+        margin: 0 auto;
+      }
+
+      /* ── Page header ────────────────────────────────────── */
+      .page-header {
+        margin-bottom: 2rem;
+      }
+      .page-header h2 {
+        font-size: 22px;
+        font-weight: 600;
+        color: var(--slate-900);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 6px;
+      }
+      .page-header h2 .icon-wrap {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        background: var(--blue-600);
+        border-radius: var(--radius-md);
+        color: #fff;
+        font-size: 20px;
+        flex-shrink: 0;
+      }
+      .subtitle {
+        font-size: 13.5px;
+        color: var(--color-text-muted);
+        line-height: 1.65;
+        padding-left: 48px;
+      }
+
+      /* ── Step ───────────────────────────────────────────── */
+      .step {
+        margin-bottom: 1.25rem;
+      }
+      .step-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: var(--slate-400);
+        margin-bottom: 8px;
+      }
+      .step-label::before {
+        content: "";
+        display: inline-block;
+        width: 18px;
+        height: 2px;
+        background: var(--blue-500);
+        border-radius: 2px;
+      }
+
+      /* ── Card ───────────────────────────────────────────── */
+      .card,
+      .month-card {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        padding: 1.25rem 1.375rem;
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 10px;
+        transition: box-shadow 0.15s ease;
+      }
+      .card:focus-within,
+      .month-card:focus-within {
+        box-shadow: var(--shadow-md);
+      }
+
+      /* ── Section title ──────────────────────────────────── */
+      .section-title {
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--slate-700);
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      /* ── Labels & inputs ────────────────────────────────── */
+      label {
+        display: block;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--slate-500);
+        margin-bottom: 5px;
+        letter-spacing: 0.01em;
+      }
+
+      input[type="number"],
+      input[type="text"],
+      select {
+        width: 100%;
+        padding: 9px 12px;
+        font-size: 14px;
+        font-family: var(--font-sans);
+        color: var(--slate-800);
+        background: var(--slate-50);
+        border: 1px solid var(--slate-200);
+        border-radius: var(--radius-md);
+        outline: none;
+        transition:
+          border-color 0.15s,
+          box-shadow 0.15s,
+          background 0.15s;
+        -webkit-appearance: none;
+      }
+      input[type="number"]:focus,
+      input[type="text"]:focus,
+      select:focus {
+        background: #fff;
+        border-color: var(--blue-500);
+        box-shadow: 0 0 0 3px rgb(59 130 246 / 0.15);
+      }
+      input::placeholder {
+        color: var(--slate-400);
+      }
+
+      /* ── Grid rows ──────────────────────────────────────── */
+      .row {
+        display: grid;
+        gap: 10px;
+      }
+      .row-2 {
+        grid-template-columns: 1fr 1fr;
+      }
+      .row-3 {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+      .row-4 {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      /* ── Number selector buttons ────────────────────────── */
+      .num-btn-group {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+      }
+      .num-btn {
+        font-family: var(--font-sans);
+        font-size: 15px;
+        font-weight: 600;
+        padding: 10px 0;
+        background: var(--slate-50);
+        color: var(--slate-500);
+        border: 1px solid var(--slate-200);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: all 0.15s ease;
+        text-align: center;
+      }
+      .num-btn:hover {
+        background: var(--slate-100);
+        color: var(--slate-700);
+        border-color: var(--slate-300);
+      }
+      .num-btn.active {
+        background: var(--blue-600) !important;
+        color: #fff !important;
+        border-color: var(--blue-700) !important;
+        box-shadow: var(--shadow-sm);
+      }
+
+      /* ── Add / secondary button ─────────────────────────── */
+      .add-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-family: var(--font-sans);
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--slate-600);
+        background: var(--slate-50);
+        border: 1px solid var(--slate-200);
+        border-radius: var(--radius-md);
+        padding: 7px 14px;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: all 0.15s ease;
+      }
+      .add-btn:hover {
+        background: var(--slate-100);
+        border-color: var(--slate-300);
+        color: var(--slate-800);
+      }
+
+      /* ── Remove button ──────────────────────────────────── */
+      .remove-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        color: var(--slate-400);
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 6px;
+        border-radius: var(--radius-sm);
+        transition: all 0.15s;
+        line-height: 1;
+      }
+      .remove-btn:hover {
+        color: var(--red-500);
+        background: var(--red-50);
+      }
+
+      /* ── Primary calculate button ───────────────────────── */
+      .calc-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        padding: 13px;
+        font-family: var(--font-sans);
+        font-size: 15px;
+        font-weight: 600;
+        color: #fff;
+        background: var(--blue-600);
+        border: none;
+        border-radius: var(--radius-lg);
+        cursor: pointer;
+        box-shadow:
+          0 1px 3px rgb(37 99 235 / 0.4),
+          0 4px 12px rgb(37 99 235 / 0.2);
+        transition: all 0.15s ease;
+        letter-spacing: 0.01em;
+        margin-top: 4px;
+      }
+      .calc-btn:hover {
+        background: var(--blue-700);
+        box-shadow:
+          0 2px 6px rgb(29 78 216 / 0.45),
+          0 6px 18px rgb(29 78 216 / 0.25);
+        transform: translateY(-1px);
+      }
+      .calc-btn:active {
+        transform: translateY(0);
+      }
+
+      /* ── Info box ───────────────────────────────────────── */
+      .info-box {
+        background: var(--blue-50);
+        border: 1px solid var(--blue-100);
+        border-radius: var(--radius-md);
+        padding: 10px 14px;
+        font-size: 12.5px;
+        color: var(--slate-600);
+        margin-bottom: 14px;
+        line-height: 1.7;
+      }
+
+      /* ── Live variable preview ──────────────────────────── */
+      .live-variable {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12.5px;
+        font-family: var(--font-mono);
+        color: var(--slate-500);
+        margin-top: 10px;
+        padding: 9px 12px;
+        background: var(--slate-50);
+        border: 1px solid var(--slate-200);
+        border-radius: var(--radius-md);
+      }
+      .live-variable strong {
+        color: var(--slate-700);
+        font-weight: 600;
+      }
+
+      /* ── Badge ──────────────────────────────────────────── */
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        font-size: 10.5px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 99px;
+        background: var(--blue-50);
+        color: var(--blue-600);
+        border: 1px solid var(--blue-100);
+        letter-spacing: 0.02em;
+      }
+
+      /* ── Divider ────────────────────────────────────────── */
+      .divider {
+        border: none;
+        border-top: 1px solid var(--slate-200);
+        margin: 2rem 0;
+      }
+
+      /* ── Error ──────────────────────────────────────────── */
+      .error {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--red-500);
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .error:not(:empty)::before {
+        content: "\ea0b";
+        font-family: tabler-icons;
+        font-size: 15px;
+      }
+
+      /* ── Presence grid ──────────────────────────────────── */
+      .presence-grid {
+        display: grid;
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      /* ── Results ────────────────────────────────────────── */
+      .result-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 10px;
+        margin-bottom: 1rem;
+      }
+      .result-card {
+        background: linear-gradient(
+          135deg,
+          var(--slate-900) 0%,
+          var(--slate-800) 100%
+        );
+        border-radius: var(--radius-lg);
+        padding: 1.125rem 1.25rem;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+      }
+      .result-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          ellipse at top right,
+          rgb(59 130 246 / 0.2),
+          transparent 60%
+        );
+        pointer-events: none;
+      }
+      .result-name {
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--slate-400);
+        margin-bottom: 6px;
+      }
+      .result-amount {
+        font-size: 28px;
+        font-weight: 600;
+        color: #fff;
+        font-family: var(--font-mono);
+        line-height: 1;
+        margin-bottom: 8px;
+      }
+      .result-detail {
+        font-size: 11.5px;
+        color: var(--slate-400);
+        line-height: 1.7;
+      }
+
+      /* ── Tables ─────────────────────────────────────────── */
+      table {
+        width: 100%;
+        font-size: 13px;
+        border-collapse: collapse;
+      }
+      thead th {
+        text-align: left;
+        padding: 6px 8px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--slate-400);
+        border-bottom: 1px solid var(--slate-100);
+      }
+      thead th:not(:first-child) {
+        text-align: right;
+      }
+      tbody tr {
+        border-top: 1px solid var(--slate-100);
+        transition: background 0.1s;
+      }
+      tbody tr:hover {
+        background: var(--slate-50);
+      }
+      tbody td {
+        padding: 8px 8px;
+        color: var(--slate-700);
+        vertical-align: middle;
+      }
+      tbody td:not(:first-child) {
+        text-align: right;
+      }
+
+      /* ── Result section heading ─────────────────────────── */
+      #results h2 {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--slate-900);
+        margin-bottom: 4px;
+      }
+      #results .subtitle {
+        padding-left: 0;
+        margin-bottom: 1.25rem;
+      }
+      #results .subtitle strong {
+        color: var(--slate-700);
+        font-weight: 600;
+      }
+
+      /* ── Responsive ─────────────────────────────────────── */
+      @media (max-width: 520px) {
+        body {
+          padding: 1.25rem 0.75rem 3rem;
+        }
+        .row-4 {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .result-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <!-- Header -->
+      <div class="page-header">
+        <h2>
+          <span class="icon-wrap"
+            ><i class="ti ti-bolt" aria-hidden="true"></i
+          ></span>
+          Divisione bolletta luce
+        </h2>
+        <p class="subtitle">
+          Inserisci il totale, i costi fissi e i giorni di presenza: il resto
+          viene distribuito proporzionalmente.
+        </p>
+      </div>
+
+      <!-- Step 1 -->
+      <div class="step">
+        <div class="step-label">1 — Totale bolletta</div>
+        <div class="card">
+          <label>Importo totale da pagare (€, IVA inclusa)</label>
+          <input
+            type="number"
+            id="totalAmount"
+            placeholder="es. 207.35"
+            min="0"
+            step="0.01"
+            oninput="updateLiveVariable()"
+          />
+          <div class="live-variable" id="liveVar" style="display: none"></div>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step">
+        <div class="step-label">2 — Coinquilini</div>
+        <div class="card">
+          <p class="section-title">Quanti coinquilini?</p>
+          <div class="num-btn-group" id="numBtns">
+            <button onclick="setNum(1)" id="nb1" class="num-btn">1</button>
+            <button onclick="setNum(2)" id="nb2" class="num-btn">2</button>
+            <button onclick="setNum(3)" id="nb3" class="num-btn">3</button>
+            <button onclick="setNum(4)" id="nb4" class="num-btn">4</button>
+          </div>
+          <div id="nameFields" class="row row-2" style="margin-top: 14px"></div>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step">
+        <div class="step-label">3 — Costi fissi</div>
+        <div class="card">
+          <p class="section-title">
+            Voci di costo fisso
+            <span class="badge">divise ugualmente</span>
+          </p>
+          <p
+            style="
+              font-size: 12.5px;
+              color: var(--slate-500);
+              margin-bottom: 12px;
+              line-height: 1.65;
+            "
+          >
+            Inserisci gli importi
+            <strong style="color: var(--slate-700)">IVA inclusa</strong> così
+            come appaiono in bolletta. Tutto ciò che non è costo fisso verrà
+            distribuito per presenza.
+          </p>
+          <div id="fixedCosts"></div>
+          <button class="add-btn" onclick="addFixed()">
+            <i class="ti ti-plus" aria-hidden="true"></i> Aggiungi voce
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="step">
+        <div class="step-label">4 — Presenza in casa</div>
+        <div class="card">
+          <p class="section-title">
+            Mesi della bolletta
+            <span class="badge">costi variabili per presenza</span>
+          </p>
+          <div class="info-box">
+            <i
+              class="ti ti-info-circle"
+              aria-hidden="true"
+              style="vertical-align: -2px; margin-right: 4px; font-size: 13px"
+            ></i>
+            La parte variabile (totale − costi fissi) viene ripartita
+            proporzionalmente ai giorni di presenza di ciascuno. Se la bolletta
+            copre più mesi, puoi pesarli separatamente.
+          </div>
+          <div id="months"></div>
+          <button class="add-btn" onclick="addMonth()">
+            <i class="ti ti-plus" aria-hidden="true"></i> Aggiungi mese
+          </button>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <button class="calc-btn" onclick="calculate()">
+        <i
+          class="ti ti-calculator"
+          aria-hidden="true"
+          style="font-size: 17px"
+        ></i>
+        Calcola divisione
+      </button>
+      <div id="error" class="error"></div>
+
+      <hr class="divider" id="resultDivider" style="display: none" />
+      <div id="results"></div>
+    </div>
+
+    <script>
+      const MESI = [
+        "Gennaio",
+        "Febbraio",
+        "Marzo",
+        "Aprile",
+        "Maggio",
+        "Giugno",
+        "Luglio",
+        "Agosto",
+        "Settembre",
+        "Ottobre",
+        "Novembre",
+        "Dicembre",
+      ];
+      let numPeople = 0,
+        monthCount = 0,
+        fixedCount = 0;
+
+      function updateLiveVariable() {
+        const total = parseFloat(document.getElementById("totalAmount").value);
+        const lv = document.getElementById("liveVar");
+        if (isNaN(total)) {
+          lv.style.display = "none";
+          return;
+        }
+        const fixedSum = getFixedSum();
+        const variable = total - fixedSum;
+        lv.style.display = "";
+        lv.innerHTML = `Totale: <strong>€${total.toFixed(2)}</strong> &minus; Fissi: <strong>€${fixedSum.toFixed(2)}</strong> = Variabile: <strong>€${variable.toFixed(2)}</strong>`;
+      }
+
+      function getFixedSum() {
+        let s = 0;
+        for (let d of document.getElementById("fixedCosts").children) {
+          const inputs = d.querySelectorAll("input");
+          s += parseFloat(inputs[1].value) || 0;
+        }
+        return s;
+      }
+
+      function setNum(n) {
+        numPeople = n;
+        [1, 2, 3, 4].forEach((i) => {
+          const b = document.getElementById("nb" + i);
+          b.classList.toggle("active", i === n);
+          b.style.background = "";
+          b.style.color = "";
+          b.style.border = "";
+        });
+        const nf = document.getElementById("nameFields");
+        const cols = n <= 2 ? "row-2" : n === 3 ? "row-3" : "row-4";
+        nf.className = "row " + cols;
+        nf.innerHTML = "";
+        for (let i = 0; i < n; i++) {
+          nf.innerHTML += `<div><label>Coinquilino ${i + 1}</label><input type="text" id="name_${i}" placeholder="Nome" oninput="updateMonthGrids()"></div>`;
+        }
+        updateMonthGrids();
+      }
+
+      function getNames() {
+        const arr = [];
+        for (let i = 0; i < numPeople; i++) {
+          const el = document.getElementById("name_" + i);
+          arr.push(
+            el
+              ? el.value.trim() || `Coinquilino ${i + 1}`
+              : `Coinquilino ${i + 1}`,
+          );
+        }
+        return arr;
+      }
+
+      function addFixed() {
+        fixedCount++;
+        const id = fixedCount;
+        const div = document.createElement("div");
+        div.id = "fixed_" + id;
+        div.style.cssText =
+          "display:flex;gap:10px;align-items:flex-end;margin-bottom:10px;";
+        div.innerHTML = `
+      <div style="flex:2"><label>Descrizione</label><input type="text" placeholder="es. Quota fissa, Quota potenza…"></div>
+      <div style="flex:1"><label>Importo €</label><input type="number" min="0" step="0.01" placeholder="0.00" oninput="updateLiveVariable()"></div>
+      <button class="remove-btn" onclick="document.getElementById('fixed_${id}').remove();updateLiveVariable()" title="Rimuovi"><i class="ti ti-x" aria-hidden="true"></i></button>`;
+        document.getElementById("fixedCosts").appendChild(div);
+      }
+
+      function addMonth() {
+        monthCount++;
+        const id = monthCount;
+        const div = document.createElement("div");
+        div.id = "month_" + id;
+        div.className = "month-card";
+        const now = new Date();
+        const mIdx = (now.getMonth() - (monthCount - 1) + 12) % 12;
+        div.innerHTML = `
+      <div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;">
+        <div style="flex:2;min-width:120px"><label>Mese</label>
+          <select id="msel_${id}" onchange="rebuildPresenceGrid(${id})">
+            ${MESI.map((m, i) => `<option value="${i}" ${i === mIdx ? "selected" : ""}>${m}</option>`).join("")}
+          </select>
+        </div>
+        <div style="flex:1;min-width:80px"><label>Anno</label>
+          <input type="number" id="myear_${id}" value="${now.getFullYear()}" min="2000" max="2099" onchange="rebuildPresenceGrid(${id})">
+        </div>
+        <button class="remove-btn" style="margin-bottom:2px" onclick="document.getElementById('month_${id}').remove()" title="Rimuovi mese"><i class="ti ti-x" aria-hidden="true"></i></button>
+      </div>
+      <div class="presence-grid" id="pg_${id}" data-month-id="${id}"></div>`;
+        document.getElementById("months").appendChild(div);
+        rebuildPresenceGrid(id);
+      }
+
+      function daysInMonth(m, y) {
+        return new Date(y, m + 1, 0).getDate();
+      }
+
+      function rebuildPresenceGrid(id) {
+        const container = document.getElementById("pg_" + id);
+        if (!container) return;
+        const m = parseInt(document.getElementById("msel_" + id).value);
+        const y =
+          parseInt(document.getElementById("myear_" + id).value) ||
+          new Date().getFullYear();
+        const maxD = daysInMonth(m, y);
+        const ns = getNames();
+        const cols =
+          ns.length <= 2 ? "row-2" : ns.length === 3 ? "row-3" : "row-4";
+        const prevVals = {};
+        container.querySelectorAll("input").forEach((inp) => {
+          prevVals[inp.id] = inp.value;
+        });
+        container.className = "presence-grid " + cols;
+        if (ns.length === 0) {
+          container.innerHTML =
+            '<p style="font-size:13px;color:var(--slate-500);margin-top:8px;">Inserisci prima i coinquilini.</p>';
+          return;
+        }
+        container.innerHTML = ns
+          .map((n, i) => {
+            const pid = `dp_${id}_${i}`;
+            const prev = prevVals[pid] !== undefined ? prevVals[pid] : maxD;
+            return `<div style="margin-top:8px;"><label>${n} — giorni presenti (max ${maxD})</label><input type="number" id="${pid}" min="0" max="${maxD}" step="1" value="${Math.min(parseInt(prev) || maxD, maxD)}"></div>`;
+          })
+          .join("");
+      }
+
+      function updateMonthGrids() {
+        document
+          .querySelectorAll(".presence-grid")
+          .forEach((g) => rebuildPresenceGrid(g.dataset.monthId));
+      }
+
+      function calculate() {
+        document.getElementById("error").textContent = "";
+        document.getElementById("results").innerHTML = "";
+        document.getElementById("resultDivider").style.display = "none";
+
+        if (numPeople === 0) {
+          showErr("Seleziona il numero di coinquilini.");
+          return;
+        }
+        const ns = getNames();
+        const total = parseFloat(document.getElementById("totalAmount").value);
+        if (isNaN(total) || total <= 0) {
+          showErr("Inserisci il totale della bolletta.");
+          return;
+        }
+
+        const fixedItems = [];
+        let fixedTotal = 0;
+        for (let d of document.getElementById("fixedCosts").children) {
+          const inputs = d.querySelectorAll("input");
+          const desc = inputs[0].value.trim() || "Voce fissa";
+          const amt = parseFloat(inputs[1].value) || 0;
+          fixedItems.push({ desc, amt });
+          fixedTotal += amt;
+        }
+
+        const variableTotal = total - fixedTotal;
+        if (variableTotal < 0) {
+          showErr("I costi fissi superano il totale bolletta.");
+          return;
+        }
+
+        const monthDivs = document.querySelectorAll(".month-card");
+        if (monthDivs.length === 0) {
+          showErr("Aggiungi almeno un mese di presenza.");
+          return;
+        }
+
+        const monthData = [];
+        for (let d of monthDivs) {
+          const mid = d.id.replace("month_", "");
+          const mIdx = parseInt(document.getElementById("msel_" + mid).value);
+          const yr = parseInt(document.getElementById("myear_" + mid).value);
+          const maxD = daysInMonth(mIdx, yr);
+          const days = [];
+          for (let i = 0; i < numPeople; i++)
+            days.push(
+              parseInt(document.getElementById(`dp_${mid}_${i}`)?.value) || 0,
+            );
+          monthData.push({ mIdx, yr, maxD, days });
+        }
+
+        const totalMonthDays = monthData.reduce((s, m) => s + m.maxD, 0);
+        const perPersonDayWeight = new Array(numPeople).fill(0);
+        let totalWeight = 0;
+        for (let m of monthData) {
+          const w = m.maxD / totalMonthDays;
+          const monthTotalDays = m.days.reduce((a, b) => a + b, 0);
+          if (monthTotalDays === 0) continue;
+          for (let i = 0; i < numPeople; i++) {
+            const share = w * (m.days[i] / monthTotalDays);
+            perPersonDayWeight[i] += share;
+            totalWeight += share;
+          }
+        }
+
+        const perPersonVariable = perPersonDayWeight.map((w) =>
+          totalWeight > 0 ? variableTotal * (w / totalWeight) : 0,
+        );
+        const perPersonFixed = fixedTotal / numPeople;
+        const perPersonTotal = ns.map(
+          (n, i) => perPersonFixed + perPersonVariable[i],
+        );
+
+        document.getElementById("resultDivider").style.display = "";
+        const res = document.getElementById("results");
+
+        let html = `<h2>Risultato</h2>`;
+        html += `<p class="subtitle">Totale: <strong>€${total.toFixed(2)}</strong> &mdash; Fissi: <strong>€${fixedTotal.toFixed(2)}</strong> &mdash; Variabile: <strong>€${variableTotal.toFixed(2)}</strong></p>`;
+        html += `<div class="result-grid">`;
+        ns.forEach((n, i) => {
+          const pct = (
+            (perPersonDayWeight[i] / (totalWeight || 1)) *
+            100
+          ).toFixed(1);
+          html += `<div class="result-card">
+        <div class="result-name">${n}</div>
+        <div class="result-amount">€${perPersonTotal[i].toFixed(2)}</div>
+        <div class="result-detail">Fissi: €${perPersonFixed.toFixed(2)}<br>Consumi (${pct}%): €${perPersonVariable[i].toFixed(2)}</div>
+      </div>`;
+        });
+        html += `</div>`;
+
+        html += `<div class="card" style="margin-top:8px;">
+      <p class="section-title" style="margin-bottom:10px;">Dettaglio presenza per mese</p>
+      <table>
+        <thead><tr>
+          <th>Mese</th><th>Giorni</th>
+          ${ns.map((n) => `<th>${n}</th>`).join("")}
+        </tr></thead>
+        <tbody>`;
+        for (let m of monthData) {
+          const tot = m.days.reduce((a, b) => a + b, 0);
+          html += `<tr><td>${MESI[m.mIdx]} ${m.yr}</td><td>${m.maxD}</td>`;
+          for (let i = 0; i < numPeople; i++) {
+            const pct = tot > 0 ? ((m.days[i] / tot) * 100).toFixed(0) : 0;
+            html += `<td>${m.days[i]}gg<br><span style="font-size:11px;color:var(--slate-400)">${pct}%</span></td>`;
+          }
+          html += `</tr>`;
+        }
+        html += `</tbody></table></div>`;
+
+        if (fixedItems.length > 0) {
+          html += `<div class="card" style="margin-top:8px;">
+        <p class="section-title" style="margin-bottom:10px;">Dettaglio costi fissi</p>
+        <table>
+          <thead><tr><th>Voce</th><th>Totale</th><th>A testa</th></tr></thead>
+          <tbody>`;
+          for (let fi of fixedItems) {
+            html += `<tr><td>${fi.desc}</td><td>€${fi.amt.toFixed(2)}</td><td>€${(fi.amt / numPeople).toFixed(2)}</td></tr>`;
+          }
+          html += `</tbody></table></div>`;
+        }
+
+        res.innerHTML = html;
+        res.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function showErr(msg) {
+        document.getElementById("error").textContent = msg;
+      }
+
+      addFixed();
+      addMonth();
+    </script>
+  </body>
+</html>
