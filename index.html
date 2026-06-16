@@ -5,1085 +5,201 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Divisione Bolletta Luce</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css"
     />
-
-    <style>
-      /* ── Reset ─────────────────────────────────────────── */
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-
-      /* ── Design tokens (stile Tailwind) ────────────────── */
-      :root {
-        --font-sans: "DM Sans", sans-serif;
-        --font-mono: "DM Mono", monospace;
-
-        /* Slate palette */
-        --slate-50: #f8fafc;
-        --slate-100: #f1f5f9;
-        --slate-200: #e2e8f0;
-        --slate-300: #cbd5e1;
-        --slate-400: #94a3b8;
-        --slate-500: #64748b;
-        --slate-600: #475569;
-        --slate-700: #334155;
-        --slate-800: #1e293b;
-        --slate-900: #0f172a;
-
-        /* Blue accent */
-        --blue-50: #eff6ff;
-        --blue-100: #dbeafe;
-        --blue-200: #bfdbfe;
-        --blue-500: #3b82f6;
-        --blue-600: #2563eb;
-        --blue-700: #1d4ed8;
-
-        /* Red */
-        --red-50: #fef2f2;
-        --red-500: #ef4444;
-        --red-600: #dc2626;
-
-        /* Amber */
-        --amber-50: #fffbeb;
-        --amber-200: #fde68a;
-        --amber-600: #d97706;
-
-        /* Greens */
-        --green-50: #f0fdf4;
-        --green-500: #22c55e;
-        --green-600: #16a34a;
-
-        /* Semantic */
-        --color-bg: var(--slate-50);
-        --color-surface: #ffffff;
-        --color-border: var(--slate-200);
-        --color-border-focus: var(--blue-500);
-        --color-text: var(--slate-800);
-        --color-text-muted: var(--slate-500);
-        --color-text-faint: var(--slate-400);
-        --color-accent: var(--blue-600);
-        --color-accent-hover: var(--blue-700);
-        --color-danger: var(--red-500);
-        --color-danger-bg: var(--red-50);
-
-        --radius-sm: 6px;
-        --radius-md: 10px;
-        --radius-lg: 14px;
-        --radius-xl: 18px;
-
-        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-        --shadow-md:
-          0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-        --shadow-lg:
-          0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
-
-        /* Compatibility aliases for inline JS/dynamic styles */
-        --color-background-primary: var(--color-surface);
-        --color-background-secondary: var(--slate-50);
-        --color-background-tertiary: var(--slate-100);
-        --color-background-info: var(--blue-50);
-        --color-background-danger: var(--red-50);
-        --color-text-primary: var(--slate-800);
-        --color-text-secondary: var(--slate-500);
-        --color-text-tertiary: var(--slate-400);
-        --color-text-info: var(--blue-600);
-        --color-text-danger: var(--red-500);
-        --color-border-tertiary: var(--slate-200);
-        --color-border-info: var(--blue-200);
-        --border-radius-lg: var(--radius-lg);
-        --border-radius-md: var(--radius-md);
-      }
-
-      /* ── Base ───────────────────────────────────────────── */
-      body {
-        font-family: var(--font-sans);
-        background: var(--color-bg);
-        color: var(--color-text);
-        min-height: 100vh;
-        padding: 2.5rem 1rem 4rem;
-        font-size: 14px;
-        line-height: 1.6;
-        -webkit-font-smoothing: antialiased;
-      }
-
-      /* ── Layout wrapper ─────────────────────────────────── */
-      .app {
-        max-width: 680px;
-        margin: 0 auto;
-      }
-
-      /* ── Page header ────────────────────────────────────── */
-      .page-header {
-        margin-bottom: 2rem;
-      }
-      .page-header h2 {
-        font-size: 22px;
-        font-weight: 600;
-        color: var(--slate-900);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 6px;
-      }
-      .page-header h2 .icon-wrap {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 38px;
-        height: 38px;
-        background: var(--blue-600);
-        border-radius: var(--radius-md);
-        color: #fff;
-        font-size: 20px;
-        flex-shrink: 0;
-      }
-      .subtitle {
-        font-size: 13.5px;
-        color: var(--color-text-muted);
-        line-height: 1.65;
-        padding-left: 48px;
-      }
-
-      /* ── Step ───────────────────────────────────────────── */
-      .step {
-        margin-bottom: 1.25rem;
-      }
-      .step-label {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 11px;
-        font-weight: 600;
-        letter-spacing: 0.07em;
-        text-transform: uppercase;
-        color: var(--slate-400);
-        margin-bottom: 8px;
-      }
-      .step-label::before {
-        content: "";
-        display: inline-block;
-        width: 18px;
-        height: 2px;
-        background: var(--blue-500);
-        border-radius: 2px;
-      }
-
-      /* ── Card ───────────────────────────────────────────── */
-      .card,
-      .month-card {
-        background: var(--color-surface);
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius-lg);
-        padding: 1.25rem 1.375rem;
-        box-shadow: var(--shadow-sm);
-        margin-bottom: 10px;
-        transition: box-shadow 0.15s ease;
-      }
-      .card:focus-within,
-      .month-card:focus-within {
-        box-shadow: var(--shadow-md);
-      }
-
-      /* ── Section title ──────────────────────────────────── */
-      .section-title {
-        font-size: 13.5px;
-        font-weight: 600;
-        color: var(--slate-700);
-        margin-bottom: 10px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      /* ── Labels & inputs ────────────────────────────────── */
-      label {
-        display: block;
-        font-size: 12px;
-        font-weight: 500;
-        color: var(--slate-500);
-        margin-bottom: 5px;
-        letter-spacing: 0.01em;
-      }
-
-      input[type="number"],
-      input[type="text"],
-      select {
-        width: 100%;
-        padding: 9px 12px;
-        font-size: 14px;
-        font-family: var(--font-sans);
-        color: var(--slate-800);
-        background: var(--slate-50);
-        border: 1px solid var(--slate-200);
-        border-radius: var(--radius-md);
-        outline: none;
-        transition:
-          border-color 0.15s,
-          box-shadow 0.15s,
-          background 0.15s;
-        -webkit-appearance: none;
-      }
-      input[type="number"]:focus,
-      input[type="text"]:focus,
-      select:focus {
-        background: #fff;
-        border-color: var(--blue-500);
-        box-shadow: 0 0 0 3px rgb(59 130 246 / 0.15);
-      }
-      input::placeholder {
-        color: var(--slate-400);
-      }
-
-      /* ── Grid rows ──────────────────────────────────────── */
-      .row {
-        display: grid;
-        gap: 10px;
-      }
-      .row-2 {
-        grid-template-columns: 1fr 1fr;
-      }
-      .row-3 {
-        grid-template-columns: 1fr 1fr 1fr;
-      }
-      .row-4 {
-        grid-template-columns: repeat(4, 1fr);
-      }
-
-      /* ── Number selector buttons ────────────────────────── */
-      .num-btn-group {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 8px;
-      }
-      .num-btn {
-        font-family: var(--font-sans);
-        font-size: 15px;
-        font-weight: 600;
-        padding: 10px 0;
-        background: var(--slate-50);
-        color: var(--slate-500);
-        border: 1px solid var(--slate-200);
-        border-radius: var(--radius-md);
-        cursor: pointer;
-        transition: all 0.15s ease;
-        text-align: center;
-      }
-      .num-btn:hover {
-        background: var(--slate-100);
-        color: var(--slate-700);
-        border-color: var(--slate-300);
-      }
-      .num-btn.active {
-        background: var(--blue-600) !important;
-        color: #fff !important;
-        border-color: var(--blue-700) !important;
-        box-shadow: var(--shadow-sm);
-      }
-
-      /* ── Add / secondary button ─────────────────────────── */
-      .add-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-family: var(--font-sans);
-        font-size: 13px;
-        font-weight: 500;
-        color: var(--slate-600);
-        background: var(--slate-50);
-        border: 1px solid var(--slate-200);
-        border-radius: var(--radius-md);
-        padding: 7px 14px;
-        cursor: pointer;
-        margin-top: 10px;
-        transition: all 0.15s ease;
-      }
-      .add-btn:hover {
-        background: var(--slate-100);
-        border-color: var(--slate-300);
-        color: var(--slate-800);
-      }
-
-      /* ── Remove button ──────────────────────────────────── */
-      .remove-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 13px;
-        color: var(--slate-400);
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        padding: 6px;
-        border-radius: var(--radius-sm);
-        transition: all 0.15s;
-        line-height: 1;
-      }
-      .remove-btn:hover {
-        color: var(--red-500);
-        background: var(--red-50);
-      }
-
-      /* ── Primary calculate button ───────────────────────── */
-      .calc-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        width: 100%;
-        padding: 13px;
-        font-family: var(--font-sans);
-        font-size: 15px;
-        font-weight: 600;
-        color: #fff;
-        background: var(--blue-600);
-        border: none;
-        border-radius: var(--radius-lg);
-        cursor: pointer;
-        box-shadow:
-          0 1px 3px rgb(37 99 235 / 0.4),
-          0 4px 12px rgb(37 99 235 / 0.2);
-        transition: all 0.15s ease;
-        letter-spacing: 0.01em;
-        margin-top: 4px;
-      }
-      .calc-btn:hover {
-        background: var(--blue-700);
-        box-shadow:
-          0 2px 6px rgb(29 78 216 / 0.45),
-          0 6px 18px rgb(29 78 216 / 0.25);
-        transform: translateY(-1px);
-      }
-      .calc-btn:active {
-        transform: translateY(0);
-      }
-
-      /* ── Info box ───────────────────────────────────────── */
-      .info-box {
-        background: var(--blue-50);
-        border: 1px solid var(--blue-100);
-        border-radius: var(--radius-md);
-        padding: 10px 14px;
-        font-size: 12.5px;
-        color: var(--slate-600);
-        margin-bottom: 14px;
-        line-height: 1.7;
-      }
-
-      /* ── Live variable preview ──────────────────────────── */
-      .live-variable {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 12.5px;
-        font-family: var(--font-mono);
-        color: var(--slate-500);
-        margin-top: 10px;
-        padding: 9px 12px;
-        background: var(--slate-50);
-        border: 1px solid var(--slate-200);
-        border-radius: var(--radius-md);
-      }
-      .live-variable strong {
-        color: var(--slate-700);
-        font-weight: 600;
-      }
-
-      /* ── Badge ──────────────────────────────────────────── */
-      .badge {
-        display: inline-flex;
-        align-items: center;
-        font-size: 10.5px;
-        font-weight: 600;
-        padding: 2px 8px;
-        border-radius: 99px;
-        background: var(--blue-50);
-        color: var(--blue-600);
-        border: 1px solid var(--blue-100);
-        letter-spacing: 0.02em;
-      }
-
-      /* ── Divider ────────────────────────────────────────── */
-      .divider {
-        border: none;
-        border-top: 1px solid var(--slate-200);
-        margin: 2rem 0;
-      }
-
-      /* ── Error ──────────────────────────────────────────── */
-      .error {
-        font-size: 13px;
-        font-weight: 500;
-        color: var(--red-500);
-        margin-top: 10px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-      .error:not(:empty)::before {
-        content: "\ea0b";
-        font-family: tabler-icons;
-        font-size: 15px;
-      }
-
-      /* ── Presence grid ──────────────────────────────────── */
-      .presence-grid {
-        display: grid;
-        gap: 10px;
-        margin-top: 12px;
-      }
-
-      /* ── Results ────────────────────────────────────────── */
-      .result-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 10px;
-        margin-bottom: 1rem;
-      }
-      .result-card {
-        background: linear-gradient(
-          135deg,
-          var(--slate-900) 0%,
-          var(--slate-800) 100%
-        );
-        border-radius: var(--radius-lg);
-        padding: 1.125rem 1.25rem;
-        color: #fff;
-        position: relative;
-        overflow: hidden;
-      }
-      .result-card::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(
-          ellipse at top right,
-          rgb(59 130 246 / 0.2),
-          transparent 60%
-        );
-        pointer-events: none;
-      }
-      .result-name {
-        font-size: 12px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        color: var(--slate-400);
-        margin-bottom: 6px;
-      }
-      .result-amount {
-        font-size: 28px;
-        font-weight: 600;
-        color: #fff;
-        font-family: var(--font-mono);
-        line-height: 1;
-        margin-bottom: 8px;
-      }
-      .result-detail {
-        font-size: 11.5px;
-        color: var(--slate-400);
-        line-height: 1.7;
-      }
-
-      /* ── Tables ─────────────────────────────────────────── */
-      table {
-        width: 100%;
-        font-size: 13px;
-        border-collapse: collapse;
-      }
-      thead th {
-        text-align: left;
-        padding: 6px 8px;
-        font-size: 11px;
-        font-weight: 600;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-        color: var(--slate-400);
-        border-bottom: 1px solid var(--slate-100);
-      }
-      thead th:not(:first-child) {
-        text-align: right;
-      }
-      tbody tr {
-        border-top: 1px solid var(--slate-100);
-        transition: background 0.1s;
-      }
-      tbody tr:hover {
-        background: var(--slate-50);
-      }
-      tbody td {
-        padding: 8px 8px;
-        color: var(--slate-700);
-        vertical-align: middle;
-      }
-      tbody td:not(:first-child) {
-        text-align: right;
-      }
-
-      /* ── Result section heading ─────────────────────────── */
-      #results h2 {
-        font-size: 18px;
-        font-weight: 600;
-        color: var(--slate-900);
-        margin-bottom: 4px;
-      }
-      #results .subtitle {
-        padding-left: 0;
-        margin-bottom: 1.25rem;
-      }
-      #results .subtitle strong {
-        color: var(--slate-700);
-        font-weight: 600;
-      }
-
-      /* ── Responsive ─────────────────────────────────────── */
-      @media (max-width: 520px) {
-        body {
-          padding: 1.25rem 0.75rem 3rem;
-        }
-        .row-4 {
-          grid-template-columns: repeat(2, 1fr);
-        }
-        .result-grid {
-          grid-template-columns: 1fr 1fr;
-        }
-      }
-    </style>
+    <script>
+      window.tailwind = window.tailwind || {};
+      window.tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["DM Sans", "sans-serif"],
+              mono: ["DM Mono", "monospace"],
+            },
+          },
+        },
+      };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="app.js"></script>
   </head>
-  <body>
-    <div class="app">
-      <!-- Header -->
-      <div class="page-header">
-        <h2>
-          <span class="icon-wrap"
-            ><i class="ti ti-bolt" aria-hidden="true"></i
-          ></span>
-          Divisione bolletta luce
-        </h2>
-        <p class="subtitle">
-          Inserisci il totale, i costi fissi e i giorni di presenza: il resto
-          viene distribuito proporzionalmente.
-        </p>
-      </div>
-
-      <!-- Step 1 -->
-      <div class="step">
-        <div class="step-label">1 — Totale bolletta</div>
-        <div class="card">
-          <label>Importo totale da pagare (€, IVA inclusa)</label>
-          <input
-            type="number"
-            id="totalAmount"
-            placeholder="es. 207.35"
-            min="0"
-            step="0.01"
-            oninput="updateLiveVariable()"
-          />
-          <div class="live-variable" id="liveVar" style="display: none"></div>
-        </div>
-      </div>
-
-      <!-- Step 2 -->
-      <div class="step">
-        <div class="step-label">2 — Coinquilini</div>
-        <div class="card">
-          <p class="section-title">Quanti coinquilini?</p>
-          <div class="num-btn-group" id="numBtns">
-            <button onclick="setNum(1)" id="nb1" class="num-btn">1</button>
-            <button onclick="setNum(2)" id="nb2" class="num-btn">2</button>
-            <button onclick="setNum(3)" id="nb3" class="num-btn">3</button>
-            <button onclick="setNum(4)" id="nb4" class="num-btn">4</button>
-          </div>
-          <div id="nameFields" class="row row-2" style="margin-top: 14px"></div>
-        </div>
-      </div>
-
-      <!-- Step 3 -->
-      <div class="step">
-        <div class="step-label">3 — Costi fissi</div>
-        <div class="card">
-          <p class="section-title">
-            Voci di costo fisso
-            <span class="badge">divise ugualmente</span>
-          </p>
-          <p
-            style="
-              font-size: 12.5px;
-              color: var(--slate-500);
-              margin-bottom: 12px;
-              line-height: 1.65;
-            "
-          >
-            Inserisci gli importi
-            <strong style="color: var(--slate-700)">IVA inclusa</strong> così
-            come appaiono in bolletta. Tutto ciò che non è costo fisso verrà
-            distribuito per presenza.
-          </p>
-          <div id="fixedCosts"></div>
-          <button class="add-btn" onclick="addFixed()">
-            <i class="ti ti-plus" aria-hidden="true"></i> Aggiungi voce
-          </button>
-
-          <p class="section-title" style="margin-top: 1.5rem;">
-            Elettrodomestici sempre attivi
-            <span class="badge">divisi ugualmente</span>
-          </p>
-          <p style="font-size: 12.5px; color: var(--slate-500); margin-bottom: 12px; line-height: 1.65;">
-            Seleziona gli elettrodomestici sempre accesi. Il costo percentuale viene calcolato dinamicamente in base al consumo totale: con consumi bassi pesano di più, con consumi alti pesano di meno.
-          </p>
-          <div id="applianceCosts"></div>
-          <button class="add-btn" onclick="addAppliance()">
-            <i class="ti ti-plus" aria-hidden="true"></i> Aggiungi elettrodomestico
-          </button>
-
-          <div style="margin-top: 1.5rem">
-            <label>Consumo passivo stimato</label>
-            <input
-              type="number"
-              id="passivePct"
-              value="2.0"
-              disabled
-            />
-            <p style="font-size: 12.5px; color: var(--slate-500); margin-top: 8px; line-height: 1.5;">
-              Percentuale fissa stimata sulla base di consumi medi di dispositivi inattivi.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Step 4 -->
-      <div class="step">
-        <div class="step-label">4 — Presenza in casa</div>
-        <div class="card">
-          <p class="section-title">
-            Mesi della bolletta
-            <span class="badge">costi variabili per presenza</span>
-          </p>
-          <div class="info-box">
-            <i
-              class="ti ti-info-circle"
-              aria-hidden="true"
-              style="vertical-align: -2px; margin-right: 4px; font-size: 13px"
-            ></i>
-            La parte variabile (totale − costi fissi) viene ripartita
-            proporzionalmente ai giorni di presenza di ciascuno. Se la bolletta
-            copre più mesi, puoi pesarli separatamente.
-          </div>
-          <div id="months"></div>
-          <button class="add-btn" onclick="addMonth()">
-            <i class="ti ti-plus" aria-hidden="true"></i> Aggiungi mese
-          </button>
-        </div>
-      </div>
-
-      <!-- CTA -->
-      <button class="calc-btn" onclick="calculate()">
-        <i
-          class="ti ti-calculator"
-          aria-hidden="true"
-          style="font-size: 17px"
-        ></i>
-        Calcola divisione
-      </button>
-      <div id="error" class="error"></div>
-
-      <hr class="divider" id="resultDivider" style="display: none" />
-      <div id="results"></div>
+  <body class="relative min-h-screen bg-slate-50 text-slate-800 antialiased">
+    <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+      <div class="absolute -top-20 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-sky-200/50 blur-3xl"></div>
+      <div class="absolute bottom-0 right-0 h-96 w-96 translate-x-1/3 rounded-full bg-indigo-200/30 blur-3xl"></div>
     </div>
 
-    <script>
-      const MESI = [
-        "Gennaio",
-        "Febbraio",
-        "Marzo",
-        "Aprile",
-        "Maggio",
-        "Giugno",
-        "Luglio",
-        "Agosto",
-        "Settembre",
-        "Ottobre",
-        "Novembre",
-        "Dicembre",
-      ];
-      const APPLIANCE_ESTIMATES = {
-        "Frigorifero": 200,
-        "Router": 30,
-        "Standby TV": 50,
-        "Illuminazione stand-by": 30,
-        "Altro": 0,
-      };
-      const AVERAGE_COST_PER_KWH = 0.30;
-      const PASSIVE_PERCENT = 2.0;
-      let numPeople = 0,
-        monthCount = 0,
-        fixedCount = 0,
-        applianceCount = 0;
+    <main class="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+      <div class="space-y-6">
+        <header class="space-y-3">
+          <div class="flex items-start gap-4">
+            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-sky-600 text-white shadow-sm shadow-sky-600/25">
+              <i class="ti ti-bolt text-[20px]" aria-hidden="true"></i>
+            </div>
+            <div class="space-y-1">
+              <h1 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+                Divisione bolletta luce
+              </h1>
+              <p class="max-w-2xl text-sm leading-6 text-slate-500 sm:text-[15px]">
+                Inserisci il totale, i costi fissi e i giorni di presenza: il resto viene distribuito in modo proporzionale.
+              </p>
+            </div>
+          </div>
+        </header>
 
-      function updateLiveVariable() {
-        const total = parseFloat(document.getElementById("totalAmount").value);
-        const lv = document.getElementById("liveVar");
-        if (isNaN(total)) {
-          lv.style.display = "none";
-          return;
-        }
-        const fixedSum = getFixedSum();
-        const applianceKwh = getApplianceKwh();
-        const rawVariable = total - fixedSum;
-        const appliancePct = rawVariable > 0 ? (applianceKwh * AVERAGE_COST_PER_KWH / rawVariable) * 100 : 0;
-        const cappedAppliancePct = Math.min(appliancePct, 50);
-        const applianceCost = rawVariable > 0 ? (rawVariable * cappedAppliancePct) / 100 : 0;
-        const passiveCost = rawVariable > 0 ? (rawVariable * PASSIVE_PERCENT) / 100 : 0;
-        const presenceVariable = rawVariable - applianceCost - passiveCost;
-        lv.style.display = "";
-        lv.innerHTML = `Totale: <strong>€${total.toFixed(2)}</strong> &minus; Fissi: <strong>€${fixedSum.toFixed(2)}</strong> &minus; Elettrodomestici: <strong>${cappedAppliancePct.toFixed(1)}%</strong> = <strong>€${applianceCost.toFixed(2)}</strong> &minus; Passivo: <strong>${PASSIVE_PERCENT.toFixed(1)}%</strong> = <strong>€${passiveCost.toFixed(2)}</strong><br>Consumo da presenza: <strong>€${presenceVariable.toFixed(2)}</strong>`;
-      }
+        <section class="space-y-4">
+          <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+            <span class="h-0.5 w-4 rounded-full bg-sky-500"></span>
+            <span>1 - Totale bolletta</span>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-white/95 p-5 shadow-sm shadow-slate-200/60 transition-shadow focus-within:shadow-md">
+            <label for="totalAmount" class="mb-2 block text-sm font-medium text-slate-500">
+              Importo totale da pagare (€, IVA inclusa)
+            </label>
+            <input
+              type="number"
+              id="totalAmount"
+              placeholder="es. 207.35"
+              min="0"
+              step="0.01"
+              class="block w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:bg-white focus:ring-4 focus:ring-sky-500/15"
+            />
+            <div id="liveVar" class="mt-3 hidden rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm leading-6 text-slate-600"></div>
+          </div>
+        </section>
 
-      function getFixedSum() {
-        let s = 0;
-        for (let d of document.getElementById("fixedCosts").children) {
-          const inputs = d.querySelectorAll("input");
-          s += parseFloat(inputs[1].value) || 0;
-        }
-        return s;
-      }
+        <section class="space-y-4">
+          <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+            <span class="h-0.5 w-4 rounded-full bg-sky-500"></span>
+            <span>2 - Coinquilini</span>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-white/95 p-5 shadow-sm shadow-slate-200/60 transition-shadow focus-within:shadow-md">
+            <p class="mb-3 text-sm font-semibold text-slate-700">Quanti coinquilini?</p>
+            <div id="numBtns" class="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              <button type="button" data-num="1" class="num-btn rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-500 transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-700">
+                1
+              </button>
+              <button type="button" data-num="2" class="num-btn rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-500 transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-700">
+                2
+              </button>
+              <button type="button" data-num="3" class="num-btn rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-500 transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-700">
+                3
+              </button>
+              <button type="button" data-num="4" class="num-btn rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-500 transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-700">
+                4
+              </button>
+            </div>
+            <div id="nameFields" class="mt-4 grid gap-3 sm:grid-cols-2"></div>
+          </div>
+        </section>
 
-      function getApplianceKwh() {
-        let k = 0;
-        for (let d of document.getElementById("applianceCosts").children) {
-          const input = d.querySelector("input");
-          k += parseFloat(input?.value) || 0;
-        }
-        return k;
-      }
+        <section class="space-y-4">
+          <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+            <span class="h-0.5 w-4 rounded-full bg-sky-500"></span>
+            <span>3 - Costi fissi</span>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-white/95 p-5 shadow-sm shadow-slate-200/60 transition-shadow focus-within:shadow-md">
+            <div class="mb-3 flex flex-wrap items-center gap-2">
+              <p class="text-sm font-semibold text-slate-700">Voci di costo fisso</p>
+              <span class="inline-flex items-center rounded-full border border-sky-100 bg-sky-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-sky-700">divise ugualmente</span>
+            </div>
+            <p class="mb-4 text-sm leading-6 text-slate-500">
+              Inserisci gli importi <span class="font-semibold text-slate-700">IVA inclusa</span> così come appaiono in bolletta. Tutto ciò che non è costo fisso verrà distribuito per presenza.
+            </p>
+            <div id="fixedCosts" class="space-y-3"></div>
+            <button
+              type="button"
+              data-action="add-fixed"
+              class="mt-3 inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-sm font-medium text-slate-600 transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-800"
+            >
+              <i class="ti ti-plus text-[16px]" aria-hidden="true"></i>
+              Aggiungi voce
+            </button>
 
-      function setNum(n) {
-        numPeople = n;
-        [1, 2, 3, 4].forEach((i) => {
-          const b = document.getElementById("nb" + i);
-          b.classList.toggle("active", i === n);
-          b.style.background = "";
-          b.style.color = "";
-          b.style.border = "";
-        });
-        const nf = document.getElementById("nameFields");
-        const cols = n <= 2 ? "row-2" : n === 3 ? "row-3" : "row-4";
-        nf.className = "row " + cols;
-        nf.innerHTML = "";
-        for (let i = 0; i < n; i++) {
-          nf.innerHTML += `<div><label>Coinquilino ${i + 1}</label><input type="text" id="name_${i}" placeholder="Nome" oninput="updateMonthGrids()"></div>`;
-        }
-        updateMonthGrids();
-      }
+            <div class="mt-6">
+              <div class="mb-3 flex flex-wrap items-center gap-2">
+                <p class="text-sm font-semibold text-slate-700">Elettrodomestici sempre attivi</p>
+                <span class="inline-flex items-center rounded-full border border-sky-100 bg-sky-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-sky-700">divisi ugualmente</span>
+              </div>
+              <p class="mb-4 text-sm leading-6 text-slate-500">
+                Seleziona gli elettrodomestici sempre accesi. Il costo percentuale viene calcolato dinamicamente in base al consumo totale: con consumi bassi pesano di più, con consumi alti pesano di meno.
+              </p>
+              <div id="applianceCosts" class="space-y-3"></div>
+              <button
+                type="button"
+                data-action="add-appliance"
+                class="mt-3 inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-sm font-medium text-slate-600 transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-800"
+              >
+                <i class="ti ti-plus text-[16px]" aria-hidden="true"></i>
+                Aggiungi elettrodomestico
+              </button>
+            </div>
 
-      function getNames() {
-        const arr = [];
-        for (let i = 0; i < numPeople; i++) {
-          const el = document.getElementById("name_" + i);
-          arr.push(
-            el
-              ? el.value.trim() || `Coinquilino ${i + 1}`
-              : `Coinquilino ${i + 1}`,
-          );
-        }
-        return arr;
-      }
+            <div class="mt-6">
+              <label for="passivePct" class="mb-2 block text-sm font-medium text-slate-500">
+                Consumo passivo stimato
+              </label>
+              <input
+                type="number"
+                id="passivePct"
+                value="2.0"
+                disabled
+                class="block w-full rounded-xl border border-slate-200 bg-slate-100 px-3 py-2.5 text-sm text-slate-500 outline-none"
+              />
+              <p class="mt-2 text-sm leading-6 text-slate-500">
+                Percentuale fissa stimata sulla base di consumi medi di dispositivi inattivi.
+              </p>
+            </div>
+          </div>
+        </section>
 
-      function addFixed() {
-        fixedCount++;
-        const id = fixedCount;
-        const div = document.createElement("div");
-        div.id = "fixed_" + id;
-        div.style.cssText =
-          "display:flex;gap:10px;align-items:flex-end;margin-bottom:10px;";
-        div.innerHTML = `
-      <div style="flex:2"><label>Descrizione</label><input type="text" placeholder="es. Quota fissa, Quota potenza…"></div>
-      <div style="flex:1"><label>Importo €</label><input type="number" min="0" step="0.01" placeholder="0.00" oninput="updateLiveVariable()"></div>
-      <button class="remove-btn" onclick="document.getElementById('fixed_${id}').remove();updateLiveVariable()" title="Rimuovi"><i class="ti ti-x" aria-hidden="true"></i></button>`;
-        document.getElementById("fixedCosts").appendChild(div);
-      }
+        <section class="space-y-4">
+          <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+            <span class="h-0.5 w-4 rounded-full bg-sky-500"></span>
+            <span>4 - Presenza in casa</span>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-white/95 p-5 shadow-sm shadow-slate-200/60 transition-shadow focus-within:shadow-md">
+            <div class="mb-3 flex flex-wrap items-center gap-2">
+              <p class="text-sm font-semibold text-slate-700">Mesi della bolletta</p>
+              <span class="inline-flex items-center rounded-full border border-sky-100 bg-sky-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-sky-700">costi variabili per presenza</span>
+            </div>
+            <div class="mb-4 rounded-xl border border-sky-100 bg-sky-50/80 px-4 py-3 text-sm leading-6 text-slate-600">
+              <i class="ti ti-info-circle mr-1.5 align-[-2px] text-[15px] text-sky-600" aria-hidden="true"></i>
+              La parte variabile (totale - costi fissi) viene ripartita proporzionalmente ai giorni di presenza di ciascuno. Se la bolletta copre più mesi, puoi pesarli separatamente.
+            </div>
+            <div id="months" class="space-y-3"></div>
+            <button
+              type="button"
+              data-action="add-month"
+              class="mt-3 inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-sm font-medium text-slate-600 transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-800"
+            >
+              <i class="ti ti-plus text-[16px]" aria-hidden="true"></i>
+              Aggiungi mese
+            </button>
+          </div>
+        </section>
 
-      function addAppliance(type = "Frigorifero") {
-        applianceCount++;
-        const id = applianceCount;
-        const div = document.createElement("div");
-        div.id = "appliance_" + id;
-        div.style.cssText =
-          "display:flex;gap:10px;align-items:flex-end;margin-bottom:10px;";
-        const estimate = APPLIANCE_ESTIMATES[type] ?? 0;
-        div.innerHTML = `
-      <div style="flex:2">
-        <label>Elettrodomestico</label>
-        <select id="app_type_${id}" onchange="updateApplianceCost(${id})">
-          ${Object.keys(APPLIANCE_ESTIMATES)
-            .map(
-              (key) =>
-                `<option value="${key}" ${key === type ? "selected" : ""}>${key}</option>`,
-            )
-            .join("")}
-        </select>
+        <button
+          type="button"
+          data-action="calculate"
+          class="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-sky-600 px-4 py-3.5 text-base font-semibold text-white shadow-lg shadow-sky-600/25 transition hover:-translate-y-0.5 hover:bg-sky-700 hover:shadow-sky-700/30 active:translate-y-0"
+        >
+          <i class="ti ti-calculator text-[18px]" aria-hidden="true"></i>
+          Calcola divisione
+        </button>
+
+        <div id="error" class="text-sm font-medium text-red-500"></div>
+        <hr id="resultDivider" class="hidden border-slate-200" />
+        <div id="results" class="space-y-4"></div>
       </div>
-      <div style="flex:1"><label>kWh/mese</label><input id="app_amt_${id}" type="number" min="0" step="1" value="${Math.round(estimate)}" ${type === "Altro" ? "" : "disabled"} oninput="updateLiveVariable()"></div>
-      <button class="remove-btn" onclick="document.getElementById('appliance_${id}').remove();updateLiveVariable()" title="Rimuovi"><i class="ti ti-x" aria-hidden="true"></i></button>`;
-        document.getElementById("applianceCosts").appendChild(div);
-      }
-
-      function updateApplianceCost(id) {
-        const type = document.getElementById(`app_type_${id}`).value;
-        const kwInput = document.getElementById(`app_amt_${id}`);
-        const estimate = APPLIANCE_ESTIMATES[type] ?? 0;
-        kwInput.value = Math.round(estimate);
-        kwInput.disabled = type !== "Altro";
-        updateLiveVariable();
-      }
-
-      function addMonth() {
-        monthCount++;
-        const id = monthCount;
-        const div = document.createElement("div");
-        div.id = "month_" + id;
-        div.className = "month-card";
-        const now = new Date();
-        const mIdx = (now.getMonth() - (monthCount - 1) + 12) % 12;
-        div.innerHTML = `
-      <div style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;">
-        <div style="flex:2;min-width:120px"><label>Mese</label>
-          <select id="msel_${id}" onchange="rebuildPresenceGrid(${id})">
-            ${MESI.map((m, i) => `<option value="${i}" ${i === mIdx ? "selected" : ""}>${m}</option>`).join("")}
-          </select>
-        </div>
-        <div style="flex:1;min-width:80px"><label>Anno</label>
-          <input type="number" id="myear_${id}" value="${now.getFullYear()}" min="2000" max="2099" onchange="rebuildPresenceGrid(${id})">
-        </div>
-        <button class="remove-btn" style="margin-bottom:2px" onclick="document.getElementById('month_${id}').remove()" title="Rimuovi mese"><i class="ti ti-x" aria-hidden="true"></i></button>
-      </div>
-      <div class="presence-grid" id="pg_${id}" data-month-id="${id}"></div>`;
-        document.getElementById("months").appendChild(div);
-        rebuildPresenceGrid(id);
-      }
-
-      function daysInMonth(m, y) {
-        return new Date(y, m + 1, 0).getDate();
-      }
-
-      function rebuildPresenceGrid(id) {
-        const container = document.getElementById("pg_" + id);
-        if (!container) return;
-        const m = parseInt(document.getElementById("msel_" + id).value);
-        const y =
-          parseInt(document.getElementById("myear_" + id).value) ||
-          new Date().getFullYear();
-        const maxD = daysInMonth(m, y);
-        const ns = getNames();
-        const cols =
-          ns.length <= 2 ? "row-2" : ns.length === 3 ? "row-3" : "row-4";
-        const prevVals = {};
-        container.querySelectorAll("input").forEach((inp) => {
-          prevVals[inp.id] = inp.value;
-        });
-        container.className = "presence-grid " + cols;
-        if (ns.length === 0) {
-          container.innerHTML =
-            '<p style="font-size:13px;color:var(--slate-500);margin-top:8px;">Inserisci prima i coinquilini.</p>';
-          return;
-        }
-        container.innerHTML = ns
-          .map((n, i) => {
-            const pid = `dp_${id}_${i}`;
-            const prev = prevVals[pid] !== undefined ? prevVals[pid] : maxD;
-            return `<div style="margin-top:8px;"><label>${n} — giorni presenti (max ${maxD})</label><input type="number" id="${pid}" min="0" max="${maxD}" step="1" value="${Math.min(parseInt(prev) || maxD, maxD)}"></div>`;
-          })
-          .join("");
-      }
-
-      function updateMonthGrids() {
-        document
-          .querySelectorAll(".presence-grid")
-          .forEach((g) => rebuildPresenceGrid(g.dataset.monthId));
-      }
-
-      function calculate() {
-        document.getElementById("error").textContent = "";
-        document.getElementById("results").innerHTML = "";
-        document.getElementById("resultDivider").style.display = "none";
-
-        if (numPeople === 0) {
-          showErr("Seleziona il numero di coinquilini.");
-          return;
-        }
-        const ns = getNames();
-        const total = parseFloat(document.getElementById("totalAmount").value);
-        if (isNaN(total) || total <= 0) {
-          showErr("Inserisci il totale della bolletta.");
-          return;
-        }
-
-        const fixedItems = [];
-        let fixedTotal = 0;
-        for (let d of document.getElementById("fixedCosts").children) {
-          const inputs = d.querySelectorAll("input");
-          const desc = inputs[0].value.trim() || "Voce fissa";
-          const amt = parseFloat(inputs[1].value) || 0;
-          fixedItems.push({ desc, amt });
-          fixedTotal += amt;
-        }
-
-        const applianceItems = [];
-        let applianceKwhTotal = 0;
-        for (let d of document.getElementById("applianceCosts").children) {
-          const desc = d.querySelector("select").value || "Elettrodomestico";
-          const kwh = parseFloat(d.querySelector("input").value) || 0;
-          applianceItems.push({ desc, kwh });
-          applianceKwhTotal += kwh;
-        }
-
-        const rawVariableTotal = total - fixedTotal;
-        if (rawVariableTotal < 0) {
-          showErr("I costi fissi superano il totale bolletta.");
-          return;
-        }
-
-        const appliancePct = rawVariableTotal > 0 ? (applianceKwhTotal * AVERAGE_COST_PER_KWH / rawVariableTotal) * 100 : 0;
-        const cappedAppliancePct = Math.min(appliancePct, 50);
-        const applianceTotal = rawVariableTotal > 0 ? (rawVariableTotal * cappedAppliancePct) / 100 : 0;
-        const passiveCost = rawVariableTotal > 0 ? (rawVariableTotal * PASSIVE_PERCENT) / 100 : 0;
-        const activeVariableTotal = rawVariableTotal - applianceTotal - passiveCost;
-        if (activeVariableTotal < 0) {
-          showErr("La somma di elettrodomestici e consumo passivo supera la parte variabile della bolletta.");
-          return;
-        }
-
-        const monthDivs = document.querySelectorAll(".month-card");
-        if (monthDivs.length === 0) {
-          showErr("Aggiungi almeno un mese di presenza.");
-          return;
-        }
-
-        const monthData = [];
-        for (let d of monthDivs) {
-          const mid = d.id.replace("month_", "");
-          const mIdx = parseInt(document.getElementById("msel_" + mid).value);
-          const yr = parseInt(document.getElementById("myear_" + mid).value);
-          const maxD = daysInMonth(mIdx, yr);
-          const days = [];
-          for (let i = 0; i < numPeople; i++)
-            days.push(
-              parseInt(document.getElementById(`dp_${mid}_${i}`)?.value) || 0,
-            );
-          monthData.push({ mIdx, yr, maxD, days });
-        }
-
-        const totalMonthDays = monthData.reduce((s, m) => s + m.maxD, 0);
-        const perPersonDayWeight = new Array(numPeople).fill(0);
-        let totalWeight = 0;
-        for (let m of monthData) {
-          const w = m.maxD / totalMonthDays;
-          const monthTotalDays = m.days.reduce((a, b) => a + b, 0);
-          if (monthTotalDays === 0) continue;
-          for (let i = 0; i < numPeople; i++) {
-            const share = w * (m.days[i] / monthTotalDays);
-            perPersonDayWeight[i] += share;
-            totalWeight += share;
-          }
-        }
-
-        const allZeroPresence = totalWeight === 0;
-        const perPersonPresenceVariable = perPersonDayWeight.map((w) =>
-          allZeroPresence
-            ? activeVariableTotal / numPeople
-            : activeVariableTotal * (w / totalWeight),
-        );
-        const perPersonFixed = fixedTotal / numPeople;
-        const perPersonAppliance = applianceTotal / numPeople;
-        const perPersonPassive = passiveCost / numPeople;
-        const perPersonTotal = ns.map(
-          (n, i) => perPersonFixed + perPersonAppliance + perPersonPassive + perPersonPresenceVariable[i],
-        );
-
-        document.getElementById("resultDivider").style.display = "";
-        const res = document.getElementById("results");
-
-        let html = `<h2>Risultato</h2>`;
-        html += `<p class="subtitle">Totale: <strong>€${total.toFixed(2)}</strong> &mdash; Fissi: <strong>€${fixedTotal.toFixed(2)}</strong> &mdash; Elettrodomestici: <strong>€${applianceTotal.toFixed(2)}</strong> (${cappedAppliancePct.toFixed(1)}%) &mdash; Passivo: <strong>€${passiveCost.toFixed(2)}</strong> &mdash; Consumo da presenza: <strong>€${activeVariableTotal.toFixed(2)}</strong></p>`;
-        html += `<div class="result-grid">`;
-        ns.forEach((n, i) => {
-          const pct = allZeroPresence
-            ? "uguale"
-            : `${((perPersonDayWeight[i] / (totalWeight || 1)) * 100).toFixed(1)}%`;
-          html += `<div class="result-card">
-        <div class="result-name">${n}</div>
-        <div class="result-amount">€${perPersonTotal[i].toFixed(2)}</div>
-        <div class="result-detail">Fissi: €${perPersonFixed.toFixed(2)}<br>Appl: €${perPersonAppliance.toFixed(2)}<br>Passivo: €${perPersonPassive.toFixed(2)}<br>Consumi da presenza (${pct}): €${perPersonPresenceVariable[i].toFixed(2)}</div>
-      </div>`;
-        });
-        html += `</div>`;
-
-        html += `<div class="card" style="margin-top:8px;">
-      <p class="section-title" style="margin-bottom:10px;">Dettaglio presenza per mese</p>
-      <table>
-        <thead><tr>
-          <th>Mese</th><th>Giorni</th>
-          ${ns.map((n) => `<th>${n}</th>`).join("")}
-        </tr></thead>
-        <tbody>`;
-        for (let m of monthData) {
-          const tot = m.days.reduce((a, b) => a + b, 0);
-          html += `<tr><td>${MESI[m.mIdx]} ${m.yr}</td><td>${m.maxD}</td>`;
-          for (let i = 0; i < numPeople; i++) {
-            const pct = tot > 0 ? ((m.days[i] / tot) * 100).toFixed(0) : 0;
-            html += `<td>${m.days[i]}gg<br><span style="font-size:11px;color:var(--slate-400)">${pct}%</span></td>`;
-          }
-          html += `</tr>`;
-        }
-        html += `</tbody></table></div>`;
-
-        if (fixedItems.length > 0) {
-          html += `<div class="card" style="margin-top:8px;">
-        <p class="section-title" style="margin-bottom:10px;">Dettaglio costi fissi</p>
-        <table>
-          <thead><tr><th>Voce</th><th>Totale</th><th>A testa</th></tr></thead>
-          <tbody>`;
-          for (let fi of fixedItems) {
-            html += `<tr><td>${fi.desc}</td><td>€${fi.amt.toFixed(2)}</td><td>€${(fi.amt / numPeople).toFixed(2)}</td></tr>`;
-          }
-          html += `</tbody></table></div>`;
-        }
-
-        if (applianceItems.length > 0) {
-          html += `<div class="card" style="margin-top:8px;">
-        <p class="section-title" style="margin-bottom:10px;">Dettaglio elettrodomestici</p>
-        <table>
-          <thead><tr><th>Voce</th><th>kWh/mese</th><th>Costo totale</th><th>A testa</th></tr></thead>
-          <tbody>`;
-          for (let ai of applianceItems) {
-            const itemCost = ai.kwh * AVERAGE_COST_PER_KWH * (cappedAppliancePct / 100) / (applianceKwhTotal > 0 ? applianceKwhTotal : 1);
-            html += `<tr><td>${ai.desc}</td><td>${Math.round(ai.kwh)}</td><td>€${itemCost.toFixed(2)}</td><td>€${(itemCost / numPeople).toFixed(2)}</td></tr>`;
-          }
-          html += `</tbody></table></div>`;
-        }
-
-        res.innerHTML = html;
-        res.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-
-      function showErr(msg) {
-        document.getElementById("error").textContent = msg;
-      }
-
-      addFixed();
-      addAppliance("Frigorifero");
-      addAppliance("Router");
-      addMonth();
-    </script>
+    </main>
   </body>
 </html>
