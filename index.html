@@ -633,6 +633,31 @@
           <button class="add-btn" onclick="addFixed()">
             <i class="ti ti-plus" aria-hidden="true"></i> Aggiungi voce
           </button>
+
+          <p class="section-title" style="margin-top: 1.5rem;">
+            Elettrodomestici sempre attivi
+            <span class="badge">divisi ugualmente</span>
+          </p>
+          <p style="font-size: 12.5px; color: var(--slate-500); margin-bottom: 12px; line-height: 1.65;">
+            Seleziona gli elettrodomestici sempre accesi. Il costo percentuale viene calcolato dinamicamente in base al consumo totale: con consumi bassi pesano di più, con consumi alti pesano di meno.
+          </p>
+          <div id="applianceCosts"></div>
+          <button class="add-btn" onclick="addAppliance()">
+            <i class="ti ti-plus" aria-hidden="true"></i> Aggiungi elettrodomestico
+          </button>
+
+          <div style="margin-top: 1.5rem">
+            <label>Consumo passivo stimato</label>
+            <input
+              type="number"
+              id="passivePct"
+              value="2.0"
+              disabled
+            />
+            <p style="font-size: 12.5px; color: var(--slate-500); margin-top: 8px; line-height: 1.5;">
+              Percentuale fissa stimata sulla base di consumi medi di dispositivi inattivi.
+            </p>
+          </div>
         </div>
       </div>
 
@@ -691,9 +716,19 @@
         "Novembre",
         "Dicembre",
       ];
+      const APPLIANCE_ESTIMATES = {
+        "Frigorifero": 200,
+        "Router": 30,
+        "Standby TV": 50,
+        "Illuminazione stand-by": 30,
+        "Altro": 0,
+      };
+      const AVERAGE_COST_PER_KWH = 0.30;
+      const PASSIVE_PERCENT = 2.0;
       let numPeople = 0,
         monthCount = 0,
-        fixedCount = 0;
+        fixedCount = 0,
+        applianceCount = 0;
 
       function updateLiveVariable() {
         const total = parseFloat(document.getElementById("totalAmount").value);
@@ -703,9 +738,15 @@
           return;
         }
         const fixedSum = getFixedSum();
-        const variable = total - fixedSum;
+        const applianceKwh = getApplianceKwh();
+        const rawVariable = total - fixedSum;
+        const appliancePct = rawVariable > 0 ? (applianceKwh * AVERAGE_COST_PER_KWH / rawVariable) * 100 : 0;
+        const cappedAppliancePct = Math.min(appliancePct, 50);
+        const applianceCost = rawVariable > 0 ? (rawVariable * cappedAppliancePct) / 100 : 0;
+        const passiveCost = rawVariable > 0 ? (rawVariable * PASSIVE_PERCENT) / 100 : 0;
+        const presenceVariable = rawVariable - applianceCost - passiveCost;
         lv.style.display = "";
-        lv.innerHTML = `Totale: <strong>€${total.toFixed(2)}</strong> &minus; Fissi: <strong>€${fixedSum.toFixed(2)}</strong> = Variabile: <strong>€${variable.toFixed(2)}</strong>`;
+        lv.innerHTML = `Totale: <strong>€${total.toFixed(2)}</strong> &minus; Fissi: <strong>€${fixedSum.toFixed(2)}</strong> &minus; Elettrodomestici: <strong>${cappedAppliancePct.toFixed(1)}%</strong> = <strong>€${applianceCost.toFixed(2)}</strong> &minus; Passivo: <strong>${PASSIVE_PERCENT.toFixed(1)}%</strong> = <strong>€${passiveCost.toFixed(2)}</strong><br>Consumo da presenza: <strong>€${presenceVariable.toFixed(2)}</strong>`;
       }
 
       function getFixedSum() {
@@ -715,6 +756,15 @@
           s += parseFloat(inputs[1].value) || 0;
         }
         return s;
+      }
+
+      function getApplianceKwh() {
+        let k = 0;
+        for (let d of document.getElementById("applianceCosts").children) {
+          const input = d.querySelector("input");
+          k += parseFloat(input?.value) || 0;
+        }
+        return k;
       }
 
       function setNum(n) {
@@ -761,6 +811,40 @@
       <div style="flex:1"><label>Importo €</label><input type="number" min="0" step="0.01" placeholder="0.00" oninput="updateLiveVariable()"></div>
       <button class="remove-btn" onclick="document.getElementById('fixed_${id}').remove();updateLiveVariable()" title="Rimuovi"><i class="ti ti-x" aria-hidden="true"></i></button>`;
         document.getElementById("fixedCosts").appendChild(div);
+      }
+
+      function addAppliance(type = "Frigorifero") {
+        applianceCount++;
+        const id = applianceCount;
+        const div = document.createElement("div");
+        div.id = "appliance_" + id;
+        div.style.cssText =
+          "display:flex;gap:10px;align-items:flex-end;margin-bottom:10px;";
+        const estimate = APPLIANCE_ESTIMATES[type] ?? 0;
+        div.innerHTML = `
+      <div style="flex:2">
+        <label>Elettrodomestico</label>
+        <select id="app_type_${id}" onchange="updateApplianceCost(${id})">
+          ${Object.keys(APPLIANCE_ESTIMATES)
+            .map(
+              (key) =>
+                `<option value="${key}" ${key === type ? "selected" : ""}>${key}</option>`,
+            )
+            .join("")}
+        </select>
+      </div>
+      <div style="flex:1"><label>kWh/mese</label><input id="app_amt_${id}" type="number" min="0" step="1" value="${Math.round(estimate)}" ${type === "Altro" ? "" : "disabled"} oninput="updateLiveVariable()"></div>
+      <button class="remove-btn" onclick="document.getElementById('appliance_${id}').remove();updateLiveVariable()" title="Rimuovi"><i class="ti ti-x" aria-hidden="true"></i></button>`;
+        document.getElementById("applianceCosts").appendChild(div);
+      }
+
+      function updateApplianceCost(id) {
+        const type = document.getElementById(`app_type_${id}`).value;
+        const kwInput = document.getElementById(`app_amt_${id}`);
+        const estimate = APPLIANCE_ESTIMATES[type] ?? 0;
+        kwInput.value = Math.round(estimate);
+        kwInput.disabled = type !== "Altro";
+        updateLiveVariable();
       }
 
       function addMonth() {
@@ -854,9 +938,28 @@
           fixedTotal += amt;
         }
 
-        const variableTotal = total - fixedTotal;
-        if (variableTotal < 0) {
+        const applianceItems = [];
+        let applianceKwhTotal = 0;
+        for (let d of document.getElementById("applianceCosts").children) {
+          const desc = d.querySelector("select").value || "Elettrodomestico";
+          const kwh = parseFloat(d.querySelector("input").value) || 0;
+          applianceItems.push({ desc, kwh });
+          applianceKwhTotal += kwh;
+        }
+
+        const rawVariableTotal = total - fixedTotal;
+        if (rawVariableTotal < 0) {
           showErr("I costi fissi superano il totale bolletta.");
+          return;
+        }
+
+        const appliancePct = rawVariableTotal > 0 ? (applianceKwhTotal * AVERAGE_COST_PER_KWH / rawVariableTotal) * 100 : 0;
+        const cappedAppliancePct = Math.min(appliancePct, 50);
+        const applianceTotal = rawVariableTotal > 0 ? (rawVariableTotal * cappedAppliancePct) / 100 : 0;
+        const passiveCost = rawVariableTotal > 0 ? (rawVariableTotal * PASSIVE_PERCENT) / 100 : 0;
+        const activeVariableTotal = rawVariableTotal - applianceTotal - passiveCost;
+        if (activeVariableTotal < 0) {
+          showErr("La somma di elettrodomestici e consumo passivo supera la parte variabile della bolletta.");
           return;
         }
 
@@ -894,29 +997,33 @@
           }
         }
 
-        const perPersonVariable = perPersonDayWeight.map((w) =>
-          totalWeight > 0 ? variableTotal * (w / totalWeight) : 0,
+        const allZeroPresence = totalWeight === 0;
+        const perPersonPresenceVariable = perPersonDayWeight.map((w) =>
+          allZeroPresence
+            ? activeVariableTotal / numPeople
+            : activeVariableTotal * (w / totalWeight),
         );
         const perPersonFixed = fixedTotal / numPeople;
+        const perPersonAppliance = applianceTotal / numPeople;
+        const perPersonPassive = passiveCost / numPeople;
         const perPersonTotal = ns.map(
-          (n, i) => perPersonFixed + perPersonVariable[i],
+          (n, i) => perPersonFixed + perPersonAppliance + perPersonPassive + perPersonPresenceVariable[i],
         );
 
         document.getElementById("resultDivider").style.display = "";
         const res = document.getElementById("results");
 
         let html = `<h2>Risultato</h2>`;
-        html += `<p class="subtitle">Totale: <strong>€${total.toFixed(2)}</strong> &mdash; Fissi: <strong>€${fixedTotal.toFixed(2)}</strong> &mdash; Variabile: <strong>€${variableTotal.toFixed(2)}</strong></p>`;
+        html += `<p class="subtitle">Totale: <strong>€${total.toFixed(2)}</strong> &mdash; Fissi: <strong>€${fixedTotal.toFixed(2)}</strong> &mdash; Elettrodomestici: <strong>€${applianceTotal.toFixed(2)}</strong> (${cappedAppliancePct.toFixed(1)}%) &mdash; Passivo: <strong>€${passiveCost.toFixed(2)}</strong> &mdash; Consumo da presenza: <strong>€${activeVariableTotal.toFixed(2)}</strong></p>`;
         html += `<div class="result-grid">`;
         ns.forEach((n, i) => {
-          const pct = (
-            (perPersonDayWeight[i] / (totalWeight || 1)) *
-            100
-          ).toFixed(1);
+          const pct = allZeroPresence
+            ? "uguale"
+            : `${((perPersonDayWeight[i] / (totalWeight || 1)) * 100).toFixed(1)}%`;
           html += `<div class="result-card">
         <div class="result-name">${n}</div>
         <div class="result-amount">€${perPersonTotal[i].toFixed(2)}</div>
-        <div class="result-detail">Fissi: €${perPersonFixed.toFixed(2)}<br>Consumi (${pct}%): €${perPersonVariable[i].toFixed(2)}</div>
+        <div class="result-detail">Fissi: €${perPersonFixed.toFixed(2)}<br>Appl: €${perPersonAppliance.toFixed(2)}<br>Passivo: €${perPersonPassive.toFixed(2)}<br>Consumi da presenza (${pct}): €${perPersonPresenceVariable[i].toFixed(2)}</div>
       </div>`;
         });
         html += `</div>`;
@@ -952,6 +1059,19 @@
           html += `</tbody></table></div>`;
         }
 
+        if (applianceItems.length > 0) {
+          html += `<div class="card" style="margin-top:8px;">
+        <p class="section-title" style="margin-bottom:10px;">Dettaglio elettrodomestici</p>
+        <table>
+          <thead><tr><th>Voce</th><th>kWh/mese</th><th>Costo totale</th><th>A testa</th></tr></thead>
+          <tbody>`;
+          for (let ai of applianceItems) {
+            const itemCost = ai.kwh * AVERAGE_COST_PER_KWH * (cappedAppliancePct / 100) / (applianceKwhTotal > 0 ? applianceKwhTotal : 1);
+            html += `<tr><td>${ai.desc}</td><td>${Math.round(ai.kwh)}</td><td>€${itemCost.toFixed(2)}</td><td>€${(itemCost / numPeople).toFixed(2)}</td></tr>`;
+          }
+          html += `</tbody></table></div>`;
+        }
+
         res.innerHTML = html;
         res.scrollIntoView({ behavior: "smooth", block: "start" });
       }
@@ -961,6 +1081,8 @@
       }
 
       addFixed();
+      addAppliance("Frigorifero");
+      addAppliance("Router");
       addMonth();
     </script>
   </body>
