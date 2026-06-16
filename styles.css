@@ -16,3 +16,84 @@ textarea {
 .font-mono {
   font-family: "DM Mono", monospace;
 }
+
+@media print {
+  @page {
+    margin: 10mm;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  body {
+    background: #fff !important;
+    color: #0f172a !important;
+  }
+
+  body > div[aria-hidden="true"] {
+    display: none !important;
+  }
+
+  main {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  main > div {
+    gap: 0 !important;
+  }
+
+  main > div > header,
+  main > div > section,
+  main > div > button,
+  #error,
+  #resultDivider {
+    display: none !important;
+  }
+
+  #results {
+    display: block !important;
+    margin: 0 !important;
+    gap: 0 !important;
+  }
+
+  #results > * {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  #results .rounded-2xl,
+  #results .rounded-xl {
+    box-shadow: none !important;
+  }
+
+  #results .bg-slate-900,
+  #results .bg-gradient-to-br,
+  #results .from-slate-900,
+  #results .to-slate-800 {
+    background: #fff !important;
+    color: #0f172a !important;
+  }
+
+  #results .text-white,
+  #results .text-slate-300,
+  #results .text-slate-400 {
+    color: #334155 !important;
+  }
+
+  #results .border,
+  #results table,
+  #results th,
+  #results td {
+    border-color: #cbd5e1 !important;
+  }
+
+  #results table {
+    width: 100% !important;
+  }
+
+  #results .overflow-x-auto {
+    overflow: visible !important;
+  }
+}

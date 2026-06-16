@@ -28,6 +28,7 @@ let numPeople = 0;
 let monthCount = 0;
 let fixedCount = 0;
 let applianceCount = 0;
+let currentCalculation = null;
 
 const els = {};
 
@@ -39,6 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
   addAppliance("Router");
   addMonth();
   updateLiveVariable();
+  markResultsStale();
 });
 
 function cacheElements() {
@@ -53,6 +55,7 @@ function cacheElements() {
   els.resultDivider = document.getElementById("resultDivider");
   els.results = document.getElementById("results");
   els.calculateBtn = document.querySelector('[data-action="calculate"]');
+  els.printReportBtn = document.querySelector('[data-action="print-report"]');
 }
 
 function bindStaticEvents() {
@@ -66,10 +69,14 @@ function bindStaticEvents() {
     .addEventListener("click", () => addAppliance());
   document.querySelector('[data-action="add-month"]').addEventListener("click", () => addMonth());
   els.calculateBtn.addEventListener("click", calculate);
+  els.printReportBtn.addEventListener("click", printReport);
 
   els.totalAmount.addEventListener("input", updateLiveVariable);
+  els.totalAmount.addEventListener("input", markResultsStale);
   els.fixedCosts.addEventListener("input", updateLiveVariable);
+  els.fixedCosts.addEventListener("input", markResultsStale);
   els.applianceCosts.addEventListener("input", updateLiveVariable);
+  els.applianceCosts.addEventListener("input", markResultsStale);
   els.applianceCosts.addEventListener("change", handleApplianceChange);
   els.applianceCosts.addEventListener("click", handleRemovalClick);
   els.fixedCosts.addEventListener("click", handleRemovalClick);
@@ -115,10 +122,12 @@ function setNum(n) {
 
   els.nameFields.querySelectorAll("input").forEach((input) => {
     input.addEventListener("input", updateMonthGrids);
+    input.addEventListener("input", markResultsStale);
   });
 
   updateMonthGrids();
   updateLiveVariable();
+  markResultsStale();
 }
 
 function getNames() {
@@ -168,6 +177,7 @@ function addFixed() {
   `;
   els.fixedCosts.appendChild(row);
   updateLiveVariable();
+  markResultsStale();
 }
 
 function addAppliance(type = "Frigorifero") {
@@ -219,6 +229,7 @@ function addAppliance(type = "Frigorifero") {
   `;
   els.applianceCosts.appendChild(row);
   updateLiveVariable();
+  markResultsStale();
 }
 
 function addMonth() {
@@ -273,6 +284,7 @@ function addMonth() {
   `;
   els.months.appendChild(row);
   rebuildPresenceGrid(id);
+  markResultsStale();
 }
 
 function handleRemovalClick(event) {
@@ -285,17 +297,20 @@ function handleRemovalClick(event) {
   if (action === "remove-fixed") {
     document.getElementById(`fixed_${id}`)?.remove();
     updateLiveVariable();
+    markResultsStale();
     return;
   }
 
   if (action === "remove-appliance") {
     document.getElementById(`appliance_${id}`)?.remove();
     updateLiveVariable();
+    markResultsStale();
     return;
   }
 
   if (action === "remove-month") {
     document.getElementById(`month_${id}`)?.remove();
+    markResultsStale();
   }
 }
 
@@ -303,12 +318,14 @@ function handleApplianceChange(event) {
   const select = event.target.closest("select[data-action='appliance-type']");
   if (!select) return;
   updateApplianceCost(Number(select.dataset.id));
+  markResultsStale();
 }
 
 function handleMonthConfigChange(event) {
   const control = event.target.closest("[data-action='month-change']");
   if (!control) return;
   rebuildPresenceGrid(Number(control.dataset.id));
+  markResultsStale();
 }
 
 function updateApplianceCost(id) {
@@ -320,6 +337,7 @@ function updateApplianceCost(id) {
   amountInput.value = Math.round(estimate);
   amountInput.disabled = type !== "Altro";
   updateLiveVariable();
+  markResultsStale();
 }
 
 function getFixedSum() {
@@ -433,6 +451,8 @@ function calculate() {
   els.error.textContent = "";
   els.results.innerHTML = "";
   els.resultDivider.classList.add("hidden");
+  currentCalculation = null;
+  setPrintEnabled(false);
 
   if (numPeople === 0) {
     showErr("Seleziona il numero di coinquilini.");
@@ -526,7 +546,7 @@ function calculate() {
   );
 
   els.resultDivider.classList.remove("hidden");
-  els.results.innerHTML = buildResultsMarkup({
+  currentCalculation = {
     names,
     total,
     fixedTotal,
@@ -546,7 +566,10 @@ function calculate() {
     applianceItems,
     fixedItems,
     applianceKwhTotal,
-  });
+  };
+
+  els.results.innerHTML = buildResultsMarkup(currentCalculation);
+  setPrintEnabled(true);
 
   els.results.scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -723,6 +746,25 @@ function buildResultsMarkup(state) {
 
 function showErr(message) {
   els.error.textContent = message;
+}
+
+function markResultsStale() {
+  currentCalculation = null;
+  setPrintEnabled(false);
+}
+
+function setPrintEnabled(enabled) {
+  if (!els.printReportBtn) return;
+  els.printReportBtn.disabled = !enabled;
+}
+
+function printReport() {
+  if (!currentCalculation) {
+    showErr("Prima genera un report da stampare.");
+    return;
+  }
+
+  window.print();
 }
 
 function escapeHtml(value) {
