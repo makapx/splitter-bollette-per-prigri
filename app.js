@@ -51,6 +51,7 @@ function cacheElements() {
   els.fixedCosts = document.getElementById("fixedCosts");
   els.applianceCosts = document.getElementById("applianceCosts");
   els.months = document.getElementById("months");
+  els.commissionAmount = document.getElementById("commissionAmount");
   els.error = document.getElementById("error");
   els.resultDivider = document.getElementById("resultDivider");
   els.results = document.getElementById("results");
@@ -77,6 +78,7 @@ function bindStaticEvents() {
   els.fixedCosts.addEventListener("input", markResultsStale);
   els.applianceCosts.addEventListener("input", updateLiveVariable);
   els.applianceCosts.addEventListener("input", markResultsStale);
+  els.commissionAmount.addEventListener("input", markResultsStale);
   els.applianceCosts.addEventListener("change", handleApplianceChange);
   els.applianceCosts.addEventListener("click", handleRemovalClick);
   els.fixedCosts.addEventListener("click", handleRemovalClick);
@@ -364,6 +366,7 @@ function updateLiveVariable() {
 
   const fixedSum = getFixedSum();
   const applianceKwh = getApplianceKwh();
+  const commission = parseFloat(els.commissionAmount?.value) || 0;
   const rawVariable = total - fixedSum;
   const appliancePct = rawVariable > 0 ? (applianceKwh * AVERAGE_COST_PER_KWH) / rawVariable * 100 : 0;
   const cappedAppliancePct = Math.min(appliancePct, 50);
@@ -381,6 +384,8 @@ function updateLiveVariable() {
     = <strong class="font-mono text-slate-800">€${passiveCost.toFixed(2)}</strong>
     <br />
     <span class="font-medium text-slate-700">Consumo da presenza:</span> <strong class="font-mono text-slate-800">€${presenceVariable.toFixed(2)}</strong>
+    <br />
+    <span class="font-medium text-slate-700">Commissioni:</span> <strong class="font-mono text-slate-800">€${commission.toFixed(2)}</strong> fuori bolletta
   `;
 }
 
@@ -465,6 +470,11 @@ function calculate() {
     showErr("Inserisci il totale della bolletta.");
     return;
   }
+  const commissionTotal = parseFloat(els.commissionAmount?.value) || 0;
+  if (commissionTotal < 0) {
+    showErr("Inserisci una commissione valida.");
+    return;
+  }
 
   const fixedItems = [];
   let fixedTotal = 0;
@@ -541,14 +551,21 @@ function calculate() {
   const perPersonFixed = fixedTotal / numPeople;
   const perPersonAppliance = applianceTotal / numPeople;
   const perPersonPassive = passiveCost / numPeople;
+  const perPersonCommission = commissionTotal / numPeople;
   const perPersonTotal = names.map(
-    (_, index) => perPersonFixed + perPersonAppliance + perPersonPassive + perPersonPresenceVariable[index],
+    (_, index) =>
+      perPersonFixed +
+      perPersonAppliance +
+      perPersonPassive +
+      perPersonCommission +
+      perPersonPresenceVariable[index],
   );
 
   els.resultDivider.classList.remove("hidden");
   currentCalculation = {
     names,
     total,
+    commissionTotal,
     fixedTotal,
     applianceTotal,
     cappedAppliancePct,
@@ -557,6 +574,7 @@ function calculate() {
     perPersonFixed,
     perPersonAppliance,
     perPersonPassive,
+    perPersonCommission,
     perPersonPresenceVariable,
     perPersonTotal,
     allZeroPresence,
@@ -578,6 +596,7 @@ function buildResultsMarkup(state) {
   const {
     names,
     total,
+    commissionTotal,
     fixedTotal,
     applianceTotal,
     cappedAppliancePct,
@@ -586,6 +605,7 @@ function buildResultsMarkup(state) {
     perPersonFixed,
     perPersonAppliance,
     perPersonPassive,
+    perPersonCommission,
     perPersonPresenceVariable,
     perPersonTotal,
     allZeroPresence,
@@ -605,6 +625,7 @@ function buildResultsMarkup(state) {
         &mdash; Fissi: <strong class="font-semibold text-white">€${fixedTotal.toFixed(2)}</strong>
         &mdash; Elettrodomestici: <strong class="font-semibold text-white">€${applianceTotal.toFixed(2)}</strong> (${cappedAppliancePct.toFixed(1)}%)
         &mdash; Passivo: <strong class="font-semibold text-white">€${passiveCost.toFixed(2)}</strong>
+        &mdash; Commissioni: <strong class="font-semibold text-white">€${commissionTotal.toFixed(2)}</strong>
         &mdash; Consumo da presenza: <strong class="font-semibold text-white">€${activeVariableTotal.toFixed(2)}</strong>
       </p>
     </div>
@@ -624,6 +645,7 @@ function buildResultsMarkup(state) {
           <span class="block">Fissi: €${perPersonFixed.toFixed(2)}</span>
           <span class="block">Appl: €${perPersonAppliance.toFixed(2)}</span>
           <span class="block">Passivo: €${perPersonPassive.toFixed(2)}</span>
+          <span class="block">Commissioni: €${perPersonCommission.toFixed(2)}</span>
           <span class="block">Consumi da presenza (${presencePct}): €${perPersonPresenceVariable[index].toFixed(2)}</span>
         </p>
       </article>
@@ -705,6 +727,30 @@ function buildResultsMarkup(state) {
       </div>
     `;
   }
+
+  html += `
+    <div class="rounded-2xl border border-amber-200 bg-amber-50/70 p-5 shadow-sm shadow-amber-100/50">
+      <p class="mb-4 text-sm font-semibold text-amber-900">Commissioni fuori bolletta</p>
+      <div class="overflow-x-auto">
+        <table class="min-w-full border-collapse text-sm">
+          <thead>
+            <tr class="border-b border-amber-200 text-left text-[11px] font-semibold uppercase tracking-[0.08em] text-amber-700">
+              <th class="whitespace-nowrap py-2 pr-3">Voce</th>
+              <th class="whitespace-nowrap py-2 pr-3">Totale</th>
+              <th class="whitespace-nowrap py-2 pr-3">A testa</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-amber-100 last:border-b-0">
+              <td class="py-3 pr-3 text-slate-700">Commissione pagamento</td>
+              <td class="py-3 pr-3 text-slate-600">€${commissionTotal.toFixed(2)}</td>
+              <td class="py-3 pr-3 text-slate-600">€${perPersonCommission.toFixed(2)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
 
   if (applianceItems.length > 0) {
     html += `

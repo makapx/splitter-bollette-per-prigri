@@ -158,6 +158,30 @@
                 Percentuale fissa stimata sulla base di consumi medi di dispositivi inattivi.
               </p>
             </div>
+
+            <div class="mt-6 rounded-2xl border border-dashed border-slate-200 bg-white p-4">
+              <div class="mb-2 flex flex-wrap items-center gap-2">
+                <p class="text-sm font-semibold text-slate-700">Commissioni pagamento bolletta</p>
+                <span class="inline-flex items-center rounded-full border border-amber-100 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-amber-700">fuori bolletta</span>
+              </div>
+              <p class="mb-3 text-sm leading-6 text-slate-500">
+                Inserisci la commissione della banca o del metodo di pagamento. Non fa parte della bolletta e viene divisa sempre in parti uguali tra i coinquilini.
+              </p>
+              <label for="commissionAmount" class="mb-2 block text-sm font-medium text-slate-500">
+                Importo commissione (€)
+              </label>
+              <input
+                type="number"
+                id="commissionAmount"
+                min="0"
+                step="0.01"
+                value="0.00"
+                class="block w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-sky-500 focus:bg-white focus:ring-4 focus:ring-sky-500/15"
+              />
+              <p class="mt-2 text-sm leading-6 text-slate-500">
+                La commissione viene sommata al totale finale di ciascuno, ma non altera la ripartizione della bolletta.
+              </p>
+            </div>
           </div>
         </section>
 
